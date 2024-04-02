@@ -1,2 +1,2 @@
 # RT-chat-app
-Chat Application with web sockets in node.js
+Chat Application with wss in node.js

@@ -1,7 +1,7 @@
 import { connection, server } from 'websocket';
 import http from 'http';
 import { UserManager } from './UserManager';
-import { IncomingMessage, InitMessageType, SupportedMessage, UserMessageType, upVoteMessageType } from './messages/incomingMessages';
+import { IncomingMessage, SupportedMessage } from './messages/incomingMessages';
 import { OutgoingMessage, SupportedMessage as OutgoingSupportedMessages } from './messages/outgoingMessages';
 import { memoryStore } from './dataStorage/memoryStore';
 
@@ -20,16 +20,10 @@ httpServer.listen(8080, function() {
 
 const wsServer = new server({
     httpServer: httpServer,
-    // You should not use autoAcceptConnections for production
-    // applications, as it defeats all standard cross-origin protection
-    // facilities built into the protocol and the browser.  You should
-    // *always* verify the connection's origin and decide whether or not
-    // to accept it.
-    autoAcceptConnections: false
+    autoAcceptConnections: true
 });
 
 function originIsAllowed(origin: string) {
-  // put logic here to detect whether the specified origin is allowed.
   return true;
 }
 
@@ -46,6 +40,7 @@ wsServer.on('request', function(request) {
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             try {
+                console.log('in with message' + message.utf8Data)
                 messageHandler(connection, JSON.parse(message.utf8Data));
             } catch (e) {
                 
@@ -64,6 +59,7 @@ wsServer.on('request', function(request) {
 });
 
 function messageHandler(ws: connection, message: IncomingMessage) {
+    console.log('incoming message' + JSON.stringify(message));
     if (message.type == SupportedMessage.JoinRoom) {
         const payload = message.payload
         userManager.addUser(payload.name, payload.userId, payload.roomId, ws) 

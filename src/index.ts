@@ -20,7 +20,7 @@ httpServer.listen(8080, function() {
 
 const wsServer = new server({
     httpServer: httpServer,
-    autoAcceptConnections: true
+    autoAcceptConnections: false
 });
 
 function originIsAllowed(origin: string) {
@@ -35,12 +35,11 @@ wsServer.on('request', function(request) {
       return;
     }
     
-    var connection = request.accept('echo-protocol', request.origin);
+    var connection = request.accept(null, request.origin);
     console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
             try {
-                console.log('in with message' + message.utf8Data)
                 messageHandler(connection, JSON.parse(message.utf8Data));
             } catch (e) {
                 

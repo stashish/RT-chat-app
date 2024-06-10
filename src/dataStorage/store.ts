@@ -17,11 +17,11 @@ export class StoreChat {
 
     }
 
-    getChats(roomId: string, limit: number, offset: number) {
+    getChats(room: string, limit: number, offset: number) {
 
     }
 
-    addChats(userId: userId, name: string, roomId: string, message: string) {
+    addChats(userId: userId, name: string, room: string, message: string) {
 
     }
 

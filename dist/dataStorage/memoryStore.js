@@ -20,6 +20,9 @@ class memoryStore {
         return room.chats.reverse().slice(0, offset).slice(-1 * limit);
     }
     addChats(userId, name, roomId, message) {
+        if (!this.store.get(roomId)) {
+            this.initRoom(roomId);
+        }
         const room = this.store.get(roomId);
         if (!room) {
             return null;
@@ -41,6 +44,9 @@ class memoryStore {
         }
         const chat = room.chats.find(({ id }) => id === chatId);
         if (chat) {
+            if (chat.upVotes.find(x => x === chatId)) {
+                return chat;
+            }
             chat.upVotes.push(userId);
         }
         return chat;

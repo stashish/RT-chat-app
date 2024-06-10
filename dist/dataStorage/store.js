@@ -6,9 +6,9 @@ class StoreChat {
     }
     initRoom(roomId) {
     }
-    getChats(roomId, limit, offset) {
+    getChats(room, limit, offset) {
     }
-    addChats(userId, name, roomId, message) {
+    addChats(userId, name, room, message) {
     }
     upVoteMessage(userId, roomId, chatId) {
     }

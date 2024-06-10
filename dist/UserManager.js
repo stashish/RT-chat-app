@@ -17,6 +17,9 @@ class UserManager {
             name,
             conn: socket
         });
+        socket.on('close', (reasonCode, description) => {
+            this.removeUser(roomId, userId);
+        });
     }
     removeUser(roomId, userId) {
         var _a;
@@ -41,7 +44,10 @@ class UserManager {
             console.error('room not found');
             return;
         }
-        room.users.forEach(({ conn }) => {
+        room.users.forEach(({ conn, id }) => {
+            if (id === userId) {
+                return;
+            }
             console.log('outgoing message' + JSON.stringify(message));
             conn.sendUTF(JSON.stringify(message));
         });

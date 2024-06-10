@@ -28,9 +28,12 @@ export class memoryStore implements StoreChat {
     }
 
     addChats(userId: userId, name: string, roomId: string, message: string) {
+        if(!this.store.get(roomId)) {
+            this.initRoom(roomId);
+        }
         const room = this.store.get(roomId);
         if(!room) {
-            return null
+            return null;
         }
         const chat = {
             id: (globalChatId++).toString(),
@@ -51,6 +54,9 @@ export class memoryStore implements StoreChat {
 
         const chat = room.chats.find(({id}) => id === chatId);
         if(chat) {
+            if (chat.upVotes.find(x => x === chatId)) {
+                return chat
+            }
             chat.upVotes.push(userId);
         }
         return chat;

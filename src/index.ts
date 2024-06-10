@@ -44,24 +44,24 @@ wsServer.on('request', function(request) {
             } catch (e) {
                 
             }
-            console.log('Received Message: ' + message.utf8Data);
-            connection.sendUTF(message.utf8Data);
+            // console.log('Received Message: ' + message.utf8Data);
+            // connection.sendUTF(message.utf8Data);
         }
         // else if (message.type === 'binary') {
         //     console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
         //     connection.sendBytes(message.binaryData);
         // }
     });
-    connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    });
+    // connection.on('close', function(reasonCode, description) {
+    //     console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+    // });
 });
 
 function messageHandler(ws: connection, message: IncomingMessage) {
     console.log('incoming message' + JSON.stringify(message));
     if (message.type == SupportedMessage.JoinRoom) {
         const payload = message.payload
-        userManager.addUser(payload.name, payload.userId, payload.roomId, ws) 
+        userManager.addUser(payload.name, payload.userId, payload.roomId, ws);
     }
     
     if(message.type == SupportedMessage.SendMessage) {

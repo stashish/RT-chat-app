@@ -28,6 +28,9 @@ export class UserManager {
             name,
             conn: socket
         })
+        socket.on('close', (reasonCode, description) => {
+            this.removeUser(roomId, userId);
+        })
     }
 
     removeUser(roomId: string, userId: string) {
@@ -55,7 +58,10 @@ export class UserManager {
             return
         }
 
-        room.users.forEach(({conn}) => {
+        room.users.forEach(({conn, id}) => {
+            if (id === userId) {
+                return;
+            }
             console.log('outgoing message' + JSON.stringify(message));
             conn.sendUTF(JSON.stringify(message))
         })

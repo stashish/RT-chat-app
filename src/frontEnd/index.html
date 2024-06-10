@@ -4,13 +4,50 @@
 <body>
     <script>
         const ws = new WebSocket("ws://localhost:8080");
+        const userId = Math.floor(Math.random() * 1000);
         ws.onopen = function () {
             ws.send(JSON.stringify({
                 type: 'JOIN_ROOM',
                 payload: {
                     name : 'Aashish',
-                    userId: '21',
+                    userId,
                     roomId: '1'
+                }
+            }));
+        }
+        ws.onmessage = function(event) {
+            try {
+                const {payload, type} = JSON.parse(event.data);
+                if(type === 'ADD_CHAT') {
+                    const textNode = document.createElement('p');
+                    textNode.innerHTML = payload.message;
+                    const buttonNode = document.createElement('button');
+                    buttonNode.innerHTML = `(${payload.upvotes})`;
+                    buttonNode.setAttribute('onclick', `sendUpvote(${payload.chatId})`);
+                    buttonNode.setAttribute('id', `message-${payload.chatId}`)
+                    document.getElementById('messages').appendChild(textNode);
+                    document.getElementById('messages').appendChild(buttonNode);
+                }
+                if(type === 'UPDATE_CHAT') {
+                    const textNode = document.createElement('p');
+                    textNode.innerHTML = payload.message;
+                    const buttonNode = document.getElementById(payload.chatId);
+                    buttonNode.innerHTML = `(${payload.upvotes})`;
+                    buttonNode.setAttribute('onclick', `sendUpvote(${payload.chatId})`)
+                    document.getElementById('messages').appendChild(textNode);
+                    document.getElementById('messages').appendChild(buttonNode);
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        function sendUpvote(chatId) {
+            ws.send(JSON.stringify({
+                type: 'UPVOTE_MESSAGE',
+                payload: {
+                    userId: userId,
+                    roomId: '1',
+                    chatId
                 }
             }))
         }
@@ -18,14 +55,17 @@
             ws.send(JSON.stringify({
                 type: 'SEND_MESSAGE',
                 payload: {
-                    message : 'Helloeee',
-                    userId: '21',
+                    message: document.getElementById('ipText').value,
+                    userId: userId,
                     roomId: '1'
                 }
             }))
         }
     </script>
     HEEEE
+    <br/>
     <input type="text" id="ipText"></input>
+    <div id="messages"></div>
+    <br/>
     <button onclick="sendMessage()">Send Chat</button>
 </body>

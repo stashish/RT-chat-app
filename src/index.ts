@@ -94,7 +94,7 @@ function messageHandler(ws: connection, message: IncomingMessage) {
         if (!chat) {
             return;
         }
-
+        
         const outgoingPayload: OutgoingMessage = {
             type: OutgoingSupportedMessages.UpdateChat,
             payload : {

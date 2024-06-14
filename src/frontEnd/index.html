@@ -29,13 +29,9 @@
                     document.getElementById('messages').appendChild(buttonNode);
                 }
                 if(type === 'UPDATE_CHAT') {
-                    const textNode = document.createElement('p');
-                    textNode.innerHTML = payload.message;
-                    const buttonNode = document.getElementById(payload.chatId);
+                    const buttonNode = document.getElementById(`message-${payload.chatId}`);
                     buttonNode.innerHTML = `(${payload.upvotes})`;
                     buttonNode.setAttribute('onclick', `sendUpvote(${payload.chatId})`)
-                    document.getElementById('messages').appendChild(textNode);
-                    document.getElementById('messages').appendChild(buttonNode);
                 }
             } catch (e) {
                 console.error(e);

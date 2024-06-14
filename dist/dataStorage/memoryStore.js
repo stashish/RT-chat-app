@@ -42,9 +42,9 @@ class memoryStore {
         if (!room) {
             return;
         }
-        const chat = room.chats.find(({ id }) => id === chatId);
+        const chat = room.chats.find(({ id }) => id == chatId);
         if (chat) {
-            if (chat.upVotes.find(x => x === chatId)) {
+            if (chat.upVotes.find(x => x === userId)) {
                 return chat;
             }
             chat.upVotes.push(userId);

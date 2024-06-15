@@ -1,12 +1,15 @@
 "use client";
 
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Chat = {
   message: string;
   votes: number;
+  chatId: string;
 };
+
+const userId = Math.floor(Math.random() * 1000);
 
 export default function ChatComponent({
   initialChats,
@@ -19,15 +22,75 @@ export default function ChatComponent({
 }) {
   const [chats, setChats] = useState(initialChats || []);
   const chatRef = useRef<HTMLInputElement>(null);
+  const [socket, setSocket] = useState<WebSocket | null>(null);
   const addChat = () => {
     if (chatRef.current) {
       const chat = chatRef.current.value;
       if (!chat) return;
-      setChats([...chats, { message: chat, votes: 0 }]);
-      console.log(chat);
+      setChats([...chats, { message: chat, votes: 0, chatId: 'Dummy' }]);
+      sendMessage(chat);
       chatRef.current.value = "";
     }
   };
+
+  function sendUpvote(chatId: string) {
+    socket?.send(JSON.stringify({
+        type: 'UPVOTE_MESSAGE',
+        payload: {
+            userId: userId,
+            roomId: '1',
+            chatId
+        }
+    }))
+}
+function sendMessage(message: string) {
+    socket?.send(JSON.stringify({
+        type: 'SEND_MESSAGE',
+        payload: {
+            message,
+            userId: userId,
+            roomId: '1'
+        }
+    }))
+}
+
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8080");
+    setSocket(ws);
+    ws.onopen = function () {
+        ws.send(JSON.stringify({
+            type: 'JOIN_ROOM',
+            payload: {
+                name : 'Aashish',
+                userId,
+                roomId: '1'
+            }
+        }));
+    }
+
+    ws.onmessage = function(event) {
+        try {
+            const {payload, type} = JSON.parse(event.data);
+            if(type === 'ADD_CHAT') {
+                setChats([...chats, { message: payload.message, votes: payload.upvotes, chatId: payload.chatId }]);
+            }
+            if(type === 'UPDATE_CHAT') {
+                setChats(chats => chats.map(c => {
+                    if(c.chatId == payload.chatId) {
+                        return {
+                            ...c,
+                            votes: payload.upvotes
+                        }
+                    }
+                    return c
+                }));
+            }
+        } catch (e) {
+            console.error(e);
+        }
+    }
+  }, []);
+
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 p-2 space-y-4">
       <div className="text-center">Chat</div>

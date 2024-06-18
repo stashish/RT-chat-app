@@ -72,7 +72,7 @@ function sendMessage(message: string) {
         try {
             const {payload, type} = JSON.parse(event.data);
             if(type === 'ADD_CHAT') {
-                setChats([...chats, { message: payload.message, votes: payload.upvotes, chatId: payload.chatId }]);
+              setChats(chats => [...chats, { message: payload.message, votes: payload.upvotes, chatId: payload.chatId }]);
             }
             if(type === 'UPDATE_CHAT') {
                 setChats(chats => chats.map(c => {
@@ -89,7 +89,10 @@ function sendMessage(message: string) {
             console.error(e);
         }
     }
-  }, []);
+    return () => {
+      ws.close();
+    }
+  }, [setChats]);
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 p-2 space-y-4">
@@ -114,11 +117,12 @@ function sendMessage(message: string) {
                           const newChats = [...chats];
                           newChats[i].votes++;
                           setChats(newChats);
+                          sendUpvote(chat.chatId);
                         }}
                       >
                         <ChevronUp />
                       </button>
-                      <button
+                      {/* <button
                         className="text-xs text-gray-400"
                         onClick={() => {
                           const newChats = [...chats];
@@ -127,7 +131,7 @@ function sendMessage(message: string) {
                         }}
                       >
                         <ChevronDown />
-                      </button>
+                      </button> */}
                     </div>
                   </div>
                 </div>
@@ -174,11 +178,12 @@ function sendMessage(message: string) {
                             const newChats = [...chats];
                             newChats[i].votes++;
                             setChats(newChats);
+                            sendUpvote(chat.chatId);
                           }}
                         >
                           <ChevronUp />
                         </button>
-                        <button
+                        {/* <button
                           className="text-xs text-gray-400"
                           onClick={() => {
                             const newChats = [...chats];
@@ -187,7 +192,7 @@ function sendMessage(message: string) {
                           }}
                         >
                           <ChevronDown />
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>
@@ -218,11 +223,12 @@ function sendMessage(message: string) {
                             const newChats = [...chats];
                             newChats[i].votes++;
                             setChats(newChats);
+                            sendUpvote(chat.chatId);
                           }}
                         >
                           <ChevronUp />
                         </button>
-                        <button
+                        {/* <button
                           className="text-xs text-gray-400"
                           onClick={() => {
                             const newChats = [...chats];
@@ -231,7 +237,7 @@ function sendMessage(message: string) {
                           }}
                         >
                           <ChevronDown />
-                        </button>
+                        </button> */}
                       </div>
                     </div>
                   </div>
